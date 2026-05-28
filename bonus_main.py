@@ -44,14 +44,39 @@ plt.title("Сравнение скорости сходимости функци
 plt.legend()
 plt.show()
 
-# Исследование L2 регуляризации
+# ИСПРАВЛЕНО И ДОРАБОТАНО: Исследование L2 регуляризации с выводом графиков
 lambdas = [0.0, 0.01, 0.1, 1.0]
+norms = []
+val_accuracies = []
+
 print("\nВлияние коэффициента регуляризации L2:")
 for lam in lambdas:
     m_reg = Perceptron(2)
     m_reg.fit(X_l_train, y_l_train, X_l_val, y_l_val, epochs=100, lambda_=lam)
     w_norm = np.linalg.norm(m_reg.w)
-    print(f"Лямбда: {lam:<4} | Норма весов ||w||_2: {w_norm:.4f}")
+    norms.append(w_norm)
+    acc = np.mean(m_reg.predict(X_l_val) == y_l_val)
+    val_accuracies.append(acc)
+    print(f"Лямбда: {lam:<4} | Норма весов ||w||_2: {w_norm:.4f} | Точность на валидации: {acc:.4f}")
+
+# Отрисовка графиков для L2-регуляризации
+plt.figure(figsize=(12, 4))
+plt.subplot(1, 2, 1)
+plt.plot(lambdas, norms, marker='o', color='blue', linestyle='-', linewidth=2)
+plt.xlabel('Коэффициент регуляризации (lambda_)')
+plt.ylabel('Норма весов ||w||_2')
+plt.title('Штраф весов при росте Lambda')
+plt.grid(True)
+
+plt.subplot(1, 2, 2)
+plt.plot(lambdas, val_accuracies, marker='s', color='green', linestyle='--', linewidth=2)
+plt.xlabel('Коэффициент регуляризации (lambda_)')
+plt.ylabel('Validation Accuracy')
+plt.title('Влияние L2 на обобщающую способность')
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
 
 
 # --- Задание 3: Метрики качества и визуальный анализ ошибок ---
